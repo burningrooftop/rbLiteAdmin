@@ -1,8 +1,7 @@
 '
 '  Project: rbLiteAdmin (http://www.staddle.net)
-'  Version: 1.8.9
+'  Version: 1.8.10
 '  Summary: Run BASIC-based admin tool to manage SQLite databases on the web
-'  Last updated: 7/7/13
 '
 '  Based On: phpLiteAdmin (http://phpliteadmin.googlecode.com)
 '
@@ -48,9 +47,13 @@ numDatabases = 0
 
 ' end of the variables you may need to edit
 
+' build the basename of this file for later reference
+' $info = pathinfo($_SERVER['PHP_SELF'])
+' $thisName = $info['basename']
+
 ' constants
 PROJECT$ = "rbLiteAdmin"
-VERSION$ = "1.8.9"
+VERSION$ = "1.8.10"
 PAGE$ = PROJECT$
 FORCETYPE = 0 ' force the extension that will be used (set to false in almost all circumstances except debugging)
 DELIM$ = chr$(0)
@@ -183,13 +186,13 @@ if directory$ <> "" then
       j = 0
       while #dirstack hasdata()
         dir$ = #dirstack pop$()
-        files #dir, directory$ + "/*"
+        files #dir, dir$ + "/*"
         for i = 1 to #dir rowcount()
           ' iterate through all the files in the directory
           #dir nextfile$()
           if not(#dir isdir()) then
             file$ = #dir name$()
-            if lower$(right$(file$, 3)) = ".db" then
+            if lower$(right$(file$, 3)) = ".db" and file$ <> "Thumbs.db" then
               ' make sure the file is a valid SQLite database by checking its extension
               for k = j to 0 step -1
                 if k > 0 then
@@ -233,7 +236,7 @@ head "<script type='text/javascript'>"
 ' makes sure autoincrement can only be selected when integer type is selected
 head "function toggleAutoincrement(i)"
 head "{"
-head "  var type = document.getElementById('type'+i);"
+head "	var type = document.getElementById('type'+i);"
 head "	var autoincrement = document.getElementById('autoincrement'+i);"
 head "	if(type.value=='INTEGER')"
 head "		autoincrement.disabled = false;"
